@@ -5,6 +5,19 @@
  */
 
 $edges = [
+    ['ancestor_id' => 1, 'descendant_id' => 1],
+    ['ancestor_id' => 1, 'descendant_id' => 2],
+    ['ancestor_id' => 2, 'descendant_id' => 2],
+    ['ancestor_id' => 2, 'descendant_id' => 3],
+    ['ancestor_id' => 2, 'descendant_id' => 4],
+    ['ancestor_id' => 2, 'descendant_id' => 5],
+    ['ancestor_id' => 1, 'descendant_id' => 3],
+    ['ancestor_id' => 1, 'descendant_id' => 4],
+    ['ancestor_id' => 1, 'descendant_id' => 5],
+    ['ancestor_id' => 3, 'descendant_id' => 3],
+    ['ancestor_id' => 4, 'descendant_id' => 4],
+    ['ancestor_id' => 5, 'descendant_id' => 5],
+
     ['ancestor_id' => 11, 'descendant_id' => 11],
     ['ancestor_id' => 11, 'descendant_id' => 12],
     ['ancestor_id' => 12, 'descendant_id' => 12],
@@ -23,20 +36,25 @@ $edges = [
     ['ancestor_id' => 16, 'descendant_id' => 16],
 ];
 
+// 階層リストの初期化
 // 初始化一个空的层级列表
 $hierarchy = [];
 
+// 各ノードの階層を判別
 // 查找每个节点的层级
 function findLevel($edges, $nodeId, &$memo)
 {
+    // 計算したことあるなら、直接返す
     // 如果已经计算过该节点的层级，直接返回
     if (isset($memo[$nodeId])) {
         return $memo[$nodeId];
     }
 
+    // 一番最初のLevel
     // 默认层级为0（根节点）
     $maxLevel = 0;
 
+    // フルスキャンして、今のノードのすべての祖先ノードを探す
     // 遍历所有的边，找到当前节点的所有祖先节点
     foreach ($edges as $edge) {
         if ($edge['descendant_id'] == $nodeId && $edge['ancestor_id'] != $nodeId) {
@@ -46,17 +64,20 @@ function findLevel($edges, $nodeId, &$memo)
         }
     }
 
+    // メモする
     // 记录该节点的层级
     $memo[$nodeId] = $maxLevel;
     return $maxLevel;
 }
 
+// 全てのノードの階層を探して、階層リストを充填する
 // 查找所有节点的层级并填充层级列表
 $memo = [];
 foreach ($edges as $edge) {
     $descendantId = $edge['descendant_id'];
     $level = findLevel($edges, $descendantId, $memo);
 
+    // 該当ノードを該当階層に入れる
     // 将节点添加到对应的层级中
     if (!isset($hierarchy[$level])) {
         $hierarchy[$level] = [];
@@ -66,7 +87,8 @@ foreach ($edges as $edge) {
     }
 }
 
-// 按层级打印结果
+// print_r($hierarchy);
+
 foreach ($hierarchy as $level => $nodes) {
     echo "Level $level: " . implode(", ", $nodes) . "\n";
 }
