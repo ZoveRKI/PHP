@@ -139,7 +139,7 @@ foreach ($hierarchy[0] as $topNode) {
     ];
 }
 
-// print_r($hierarchy);
+print_r($hierarchy);
 
 // foreach ($hierarchy as $level => $nodes) {
 //     echo "Level $level: " . implode(", ", $nodes) . "\n";
